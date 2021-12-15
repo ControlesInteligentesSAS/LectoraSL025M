@@ -104,6 +104,10 @@ def sendCommand(port:str,command:bytearray)->bytearray:
         response=ser.readline()
         status = STATUS[integerToByte(response[3])]
         print(f"Response status: {status}")
+        checksum=response[:-1]
+        print(f"the checksum is {checksum} and the CRC is {CRC(response)}")
+        if checksum == CRC(response):
+            print("Checksum OK")
     except Exception as e:
         print(f"Error: {str(e)}")
     finally:
@@ -173,7 +177,34 @@ def loginSector(port:str,sector:bytes,keyType:bytes,key:bytes)->bool:
     finally:
         return retorno
 
+def downloadKeyIntoReader(port:str,sector:bytes,keyType:bytes,key:bytes)->bool:
+    """Descarga una clave de la tarjeta
+
+    Args:
+        port (str): Puerto donde está conectada la lectora
+        sector (bytes): [Sector a descargar la clave]
+        keyType (bytes): [Tipo de clave a usar (0xAA, 0xBB)]
+        key (bytes): [Clave a descargar en bytes]
+
+    Returns:
+        bool: [Retorna True si la sesión fue exitosa, False si no]
+    """ 
+    retorno = False
+    try:   
+        DOWNLOADCMD=bytearray(b'\xBA\n\x12'+sector+keyType+key)
+        DOWNLOADCMD.append(CRC(DOWNLOADCMD))
+        print(f"Sending download command {DOWNLOADCMD}")
+        response=sendCommand(port,DOWNLOADCMD)
+        print(response)
+        if integerToByte(response[0]) == b'\xBD':
+            pass
+    except Exception as e:
+        print(f"Error {str(e)}")
+    finally:
+        return retorno
+
 #selectCard(findPort())
 #(b'\r\xaa\x115\xa0\xcf')
-loginSector(findPort(),b'\x00',b'\xAA',hexToBytes("0DAA1135A0CF"))
+#loginSector(findPort(),b'\x00',b'\xAA',hexToBytes("0DAA1135A0CF"))
+downloadKeyIntoReader(findPort(),b'\x00',b'\xAA',hexToBytes("C09B3755B261"))
 #print(integerToByte(9))
