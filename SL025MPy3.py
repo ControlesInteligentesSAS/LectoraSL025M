@@ -559,14 +559,20 @@ def getFimwareVersion(ser:serial)->bytearray:
     finally:
         pass
 
-serialObject=getSerialObject()
-loginSector(serialObject,b'\x01',b'\xAA',hexToBytes("852D76D7634E"))
-#selectCard(findPort())
-#(b'\r\xaa\x115\xa0\xcf')
-downloadKeyIntoReader(serialObject,b'\x01',b'\xAA',hexToBytes("852D76D7634E"))
-loginSectorStoredKey(serialObject,b'\x01',b'\xAA')
+#serialObject=getSerialObject()
+#loginSector(serialObject,b'\x00',b'\xAA',hexToBytes("B0B1B2B3B4B5")) #852D76D7634E Azul
+#r=selectCard(serialObject)
+# print("RES")
+#print(r)
+# uid=r["uid"]
+# print(r["uid"])
+# r1=[]
 
-# respuesta=(readDataBlock(serialObject,1))
+#(b'\r\xaa\x115\xa0\xcf')
+#downloadKeyIntoReader(serialObject,b'\x01',b'\xAA',hexToBytes("FFFFFFFFFFFF")) #852D76D7634E Azul
+#loginSectorStoredKey(serialObject,b'\x01',b'\xAA')
+
+# respuesta=(readDataBlock(serialObject,0))
 # respuesta2=[]
 # for k in respuesta:
 #     respuesta2.append(k)
