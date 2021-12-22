@@ -110,7 +110,7 @@ def sendCommand(ser:serial,command:bytearray)->bytearray:
         if len(response)==0:
             raise Exception("No response")
         status = STATUS[integerToByte(response[3])]
-        #print(f"Response status: {status}")
+        print(f"Response status: {status}")
         length=response[1]
         checksum=response[length+1]
         if not (checksum == CRC(response[0:length+1])):
@@ -133,18 +133,18 @@ def selectCard(ser:serial):
     try:
         SELECTCMD=bytearray(b'\xBA\x02\x01')
         SELECTCMD.append(CRC(SELECTCMD))
-        #print(f"Sending select command {SELECTCMD}")
+        print(f"Sending select command {SELECTCMD}")
         response = sendCommand(ser,SELECTCMD)
         if integerToByte(response[0]) == b'\xBD':
             status=STATUS[integerToByte(response[3])]
             if status=="Success":
                 length=response[1]
-                #print(f"Length of response: {length}, response: {response}")
+                print(f"Length of response: {length}, response: {response}")
                 ttype=TYPES[integerToByte(response[length])]
                 uid=response[4:length].hex() #As the different cards have different UID lengths, we need to parse the UID differently
-                #print(f"UID: {uid}")
-                #print(f"UID in Decimal: {int(uid,16)}")
-                #print(f"Type: {ttype}")
+                print(f"UID: {uid}")
+                print(f"UID in Decimal: {int(uid,16)}")
+                print(f"Type: {ttype}")
                 return {'uid':uid,'type':integerToByte(response[length]),'literalType':ttype}
             else:
                 raise Exception(f"{status}")
@@ -171,7 +171,7 @@ def loginSector(ser:serial,sector:bytes,keyType:bytes,key:bytes)->bool:
     try:   
         LOGINCMD=bytearray(b'\xBA\n\x02'+sector+keyType+key)
         LOGINCMD.append(CRC(LOGINCMD))
-        #print(f"Sending login command {LOGINCMD}")
+        print(f"Sending login command {LOGINCMD}")
         response=sendCommand(ser,LOGINCMD)
         if integerToByte(response[0]) == b'\xBD':
             if response[3] != 2:
@@ -199,7 +199,7 @@ def downloadKeyIntoReader(ser:str,sector:bytes,keyType:bytes,key:bytes)->bool:
     try:   
         DOWNLOADCMD=bytearray(b'\xBA\n\x12'+sector+keyType+key)
         DOWNLOADCMD.append(CRC(DOWNLOADCMD))
-        #print(f"Sending download command {DOWNLOADCMD}")
+        print(f"Sending download command {DOWNLOADCMD}")
         response=sendCommand(ser,DOWNLOADCMD)
         if integerToByte(response[0]) == b'\xBD':
             if response[3] != 0:
@@ -242,7 +242,7 @@ def readDataBlock(ser:serial,block:int)->bytearray:
         READCMD.append(block)
         READCMD.append(CRC(READCMD))
         response=sendCommand(ser,READCMD)
-        #print(response)
+        print(response)
         if integerToByte(response[0]) == b'\xBD':
             if response[3] != 0:
                 raise Exception(f"Read data block failed! {STATUS[integerToByte(response[3])]}")
@@ -271,7 +271,7 @@ def writeDataBlock(ser:serial,block:int,data:list)->bytearray:
             WRITECMD.append(k)
         WRITECMD.append(CRC(WRITECMD))
         response=sendCommand(ser,WRITECMD)
-        #print(response)
+        print(response)
         if integerToByte(response[0]) == b'\xBD':
             if response[3] != 0:
                 raise Exception(f"Write data block failed! {STATUS[integerToByte(response[3])]}")
@@ -560,7 +560,7 @@ def getFimwareVersion(ser:serial)->bytearray:
         pass
 
 # serialObject=getSerialObject()
-# loginSector(serialObject,b'\x00',b'\xAA',hexToBytes("C09B3755B261")) #852D76D7634E Azul
+# loginSector(serialObject,b'\x01',b'\xAA',hexToBytes("B0B1B2B3B4B5")) #852D76D7634E Azul
 # r=selectCard(serialObject)
 # print("RES")
 # print(r)
@@ -569,10 +569,10 @@ def getFimwareVersion(ser:serial)->bytearray:
 # r1=[]
 
 #(b'\r\xaa\x115\xa0\xcf')
-#downloadKeyIntoReader(serialObject,b'\x01',b'\xAA',hexToBytes("FFFFFFFFFFFF")) #852D76D7634E Azul
-#loginSectorStoredKey(serialObject,b'\x01',b'\xAA')
+# downloadKeyIntoReader(serialObject,b'\x01',b'\xAA',hexToBytes("FFFFFFFFFFFF")) #852D76D7634E Azul
+# loginSectorStoredKey(serialObject,b'\x01',b'\xAA')
 
-# respuesta=(readDataBlock(serialObject,1))
+# respuesta=(readDataBlock(serialObject,0))
 # respuesta2=[]
 # for k in respuesta:
 #     respuesta2.append(k)

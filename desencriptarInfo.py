@@ -82,7 +82,7 @@ def VersionData0(dataHex:str, dataInt:list, dataHexList:list,serial:int,checksum
             cad=cad+"-"+str(dataInt[i])
         else:
             cad=cad+"."+str(dataInt[i])
-    #datelong, segundos,byteConsola,byteTipo,bytesConvenios(5),bytePago,numerosPlaca(3) 
+    #datelong, segundos,byteConsola,byteTipo,bytesConvenios(5),bytePago,idPark,?,?
     return cad.upper()
 
 def versionData1(data:list,dataHex:str,serial:int)->str:
@@ -128,21 +128,20 @@ def decodificar(serialObject,data)->str:
         version=dataBin[len(dataBin)-1]
 
     if version==1:
-        print("VERSION 1")
         decode = versionData1(dataBin,dataToHex,serialCard)
     else:
-        print("VERSION 0")
         decode = VersionData0(dataToHex,dataBin,dataToHexList,serialCard,checksum)
 
     return decode
 
 def readDatos():
     serialObject=lib.getSerialObject()
-    login=lib.loginSector(serialObject,b'\x00',b'\xAA',lib.hexToBytes("C09B3755B261")) #852D76D7634E Azul, B0B1B2B3B4B5 Titan, C09B3755B261 Parking, AF808D85BD56 Parking
+    login=lib.loginSector(serialObject,b'\x01',b'\xAA',lib.hexToBytes("FFFFFFFFFFFF")) #852D76D7634E Azul, B0B1B2B3B4B5 Titan, C09B3755B261 Parking, AF808D85BD56 Parking
+    return serialObject,login
 
 def readDataDecoded(serialObject,login):
     if login==True:
-        block=1
+        block=0
         print("LECTURA")
         data=(lib.readDataBlock(serialObject,block))
         if data==None:
@@ -154,5 +153,5 @@ def readDataDecoded(serialObject,login):
     else:
         print("Login Failed!")
 
-#serial,login=readDatos()
-#readDataDecoded(serial,login)
+# serial,login=readDatos()
+# readDataDecoded(serial,login)
