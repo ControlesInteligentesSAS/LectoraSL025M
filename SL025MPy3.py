@@ -30,7 +30,7 @@ def CRC(Data:bytes)->bytes:
 def hexToBytes(hex:str)->bytes:
     return bytes.fromhex(hex)
 
-def getSerialObjectByPort(port:str)->serial.serialwin32.Serial:
+def getSerialObjectByPort(port:str):
     """[Obtiene el objeto serial para la conexión con la lectora]
 
     Args:
@@ -45,7 +45,7 @@ def getSerialObjectByPort(port:str)->serial.serialwin32.Serial:
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
-        timeout=1
+        timeout=0.1
     )
 
 
@@ -247,7 +247,7 @@ def readDataBlock(ser:serial,block:int)->bytearray:
             if response[3] != 0:
                 raise Exception(f"Read data block failed! {STATUS[integerToByte(response[3])]}")
             else:
-                return response[4:]
+                return response[4:-1]
     except Exception as e:
         pass
     finally:
@@ -276,7 +276,7 @@ def writeDataBlock(ser:serial,block:int,data:list)->bytearray:
             if response[3] != 0:
                 raise Exception(f"Write data block failed! {STATUS[integerToByte(response[3])]}")
             else:
-                return response[4:]
+                return response[4:-1]
     except Exception as e:
         return (str(e))
     finally:
