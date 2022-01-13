@@ -272,7 +272,8 @@ None
 ```
 
 
-### writeMasterKey: Escribe la llave maestra en la tarjeta. La función retorna la llave de autenticación escrita si la operación fue exitosa.
+### writeMasterKey:
+Escribe la llave maestra en la tarjeta. La función retorna la llave de autenticación escrita si la operación fue exitosa.
 
 **Argumentos:**
 - serial (serial): Puerto serial donde está conectada la lectora
@@ -296,7 +297,8 @@ Write master key failed! Write fail
 None
 ```
 
-### incrementValue: Incrementa el valor del bloque. La función retorna el valor después del incremento si la operación fue exitosa.
+### incrementValue:
+Incrementa el valor del bloque. La función retorna el valor después del incremento si la operación fue exitosa.
 
 **Argumentos:**
 - serial (serial): Puerto serial donde está conectada la lectora
@@ -349,7 +351,8 @@ None
 ```
 
 
-### copyValue: Copia el valor de un bloque en otro bloque. la función retorna el valor después de copiar si la operación es exitosa.
+### copyValue:
+Copia el valor de un bloque en otro bloque. la función retorna el valor después de copiar si la operación es exitosa.
 
 **Argumentos:**
 serial (serial): Puerto serial donde está conectada la lectora
