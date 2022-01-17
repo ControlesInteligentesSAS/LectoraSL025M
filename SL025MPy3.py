@@ -45,7 +45,7 @@ def getSerialObjectByPort(port:str):
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
-        timeout=0.1
+        timeout=1
     )
 
 
@@ -88,7 +88,9 @@ def getSerialObject():
         SELECTCMD=bytearray(b'\xBA\x02\x01')
         SELECTCMD.append(CRC(SELECTCMD))
         ser.write(SELECTCMD)
-        response = ser.readline()
+        res = ser.read(2)
+        response = ser.read(res[1])
+        response = res+response
         if integerToByte(response[0]) == b'\xBD':
             thePort=ser
         i+=1
@@ -106,7 +108,9 @@ def sendCommand(ser:serial,command:bytearray)->bytearray:
     response=bytearray()
     try:
         ser.write(command)
-        response=ser.readline()
+        res = ser.read(2)
+        response=ser.read(res[1])
+        response = res+response
         if len(response)==0:
             raise Exception("No response")
         status = STATUS[integerToByte(response[3])]
